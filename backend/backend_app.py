@@ -106,6 +106,31 @@ def search_posts():
     # Return the matching posts
     return jsonify(matching_posts), 200
 
+@app.route('/api/posts', methods=['GET'])
+def get_posts():
+    # Get query parameters
+    sort_field = request.args.get('sort')
+    sort_direction = request.args.get('direction', 'asc')
+
+    # Validate sort field if provided
+    if sort_field and sort_field not in ['title', 'content']:
+        return jsonify({"error": f"Invalid sort field '{sort_field}'. Allowed fields: 'title', 'content'."}), 400
+
+    # Validate direction if provided
+    if sort_direction not in ['asc', 'desc']:
+        return jsonify({"error": f"Invalid sort direction '{sort_direction}'. Allowed values: 'asc', 'desc'."}), 400
+
+    # Prepare the posts list (copy original order first)
+    sorted_posts = POSTS.copy()
+
+    # Apply sorting if requested
+    if sort_field:
+        reverse = sort_direction == 'desc'
+        sorted_posts.sort(key=lambda post: post[sort_field].lower(), reverse=reverse)
+
+    # Return posts (sorted or original)
+    return jsonify(sorted_posts), 200
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5002, debug=True)
