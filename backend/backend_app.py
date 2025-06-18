@@ -11,9 +11,7 @@ POSTS = [
 ]
 
 
-@app.route('/api/posts', methods=['GET'])
-def get_posts():
-    return jsonify(POSTS)
+
 
 # New endpoint: Add a post
 @app.route('/api/posts', methods=['POST'])
